@@ -147,9 +147,50 @@ body.embed .phone .nav{bottom:12px}
   commit(db=>{
    const release=db.releases.find(r=>r.id===releaseId&&r.status==='Published');
    if(!release)return false;
-   if(db.orders.some(x=>x.releaseId===releaseId&&x.buyerId===buyerId)){outcome='owned';return false}
+   if(db.orders.some(x=>x.releaseId===releaseId&&x.buyerId===buyerId&&!x.giftTo || x.releaseId===releaseId&&x.giftClaimedBy===buyerId)){outcome='owned';return false}
    db.orders.push({id:'sale-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),releaseId,buyerId,amount:Number(release.price),method,seeded:false,createdAt:new Date().toISOString()});outcome='ok';
   });return outcome;
+ }
+
+ function giftPhone(raw){
+  const cleaned=String(raw||'').replace(/[\s().-]/g,'');
+  if(/^08\d{8}$/.test(cleaned))return '+264'+cleaned.slice(1);
+  if(/^\+2648\d{8}$/.test(cleaned))return cleaned;
+  if(/^2648\d{8}$/.test(cleaned))return '+'+cleaned;
+  return '';
+ }
+ function makeGiftCode(){
+  const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const a=new Uint8Array(8);
+  if(window.crypto?.getRandomValues)window.crypto.getRandomValues(a);
+  else for(let i=0;i<a.length;i++)a[i]=Math.floor(Math.random()*256);
+  return 'JM-'+Array.from(a,n=>alphabet[n%alphabet.length]).join('');
+ }
+ function gift(releaseId,rawPhone,method='wallet'){
+  const phone=giftPhone(rawPhone);
+  if(!phone)return {status:'phone'};
+  let result={status:'missing'};
+  commit(db=>{
+   const release=db.releases.find(r=>r.id===releaseId&&r.status==='Published');
+   if(!release)return false;
+   const codes=new Set(db.orders.map(o=>o.giftCode).filter(Boolean));
+   let code=makeGiftCode();while(codes.has(code))code=makeGiftCode();
+   db.orders.push({id:'gift-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),releaseId,buyerId:'demo-listener',amount:Number(release.price),method,seeded:false,type:'gift',giftTo:phone,giftCode:code,giftClaimedAt:null,giftClaimedBy:null,createdAt:new Date().toISOString()});
+   result={status:'ok',code,phone,releaseId,title:release.title};
+  });return result;
+ }
+ function redeemGift(rawPhone,rawCode,recipientId='demo-listener'){
+  const phone=giftPhone(rawPhone),code=String(rawCode||'').trim().toUpperCase().replace(/\s/g,'');
+  if(!phone)return {status:'phone'};
+  if(!/^JM-[A-Z2-9]{8}$/.test(code))return {status:'invalid'};
+  let result={status:'invalid'};
+  commit(db=>{
+   const order=db.orders.find(o=>o.giftCode===code&&o.giftTo===phone);
+   if(!order)return false;
+   if(order.giftClaimedAt){result={status:'claimed'};return false;}
+   order.giftClaimedAt=new Date().toISOString();order.giftClaimedBy=recipientId;
+   result={status:'ok',releaseId:order.releaseId};
+  });return result;
  }
  function metrics(db=get()){
   const gross=db.orders.reduce((sum,o)=>sum+Number(o.amount||0),0);
@@ -177,7 +218,7 @@ body.embed .phone .nav{bottom:12px}
   };
   poll();setInterval(poll,1900);
  }
- window.JaDB={get,commit,subscribe,order,metrics,requestPayout,reset,money,initial,key:KEY,get mode(){return remoteEnabled?'SQLite (local demo server)':'Shared browser demo storage'}};
+ window.JaDB={get,commit,subscribe,order,gift,redeemGift,giftPhone,metrics,requestPayout,reset,money,initial,key:KEY,get mode(){return remoteEnabled?'SQLite (local demo server)':'Shared browser demo storage'}};
  startServerSync();
 })();
 </script><script>/* Ja Music Studio — connected artist operations. Demonstration only. */
