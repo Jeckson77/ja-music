@@ -35,8 +35,10 @@ jobs:
       - name: Install Android SDK 35
         run: |
           echo "Using ANDROID_HOME=$ANDROID_HOME"
-          yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
+          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -n 1)
+          test -x "$SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" "platforms;android-35" "build-tools;35.0.0" "platform-tools"
       - name: Build two APK variants
         working-directory: android
         run: gradle --no-daemon :app:assembleListenerDebug :app:assembleStudioDebug
