@@ -1,0 +1,70 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'na.jamusic.shell'
+    compileSdk 35
+
+    defaultConfig {
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName '1.0.0-demo'
+    }
+
+    flavorDimensions += 'audience'
+    productFlavors {
+        listener {
+            dimension 'audience'
+            applicationId 'na.jamusic.listener'
+            resValue 'string', 'app_name', 'Ja Music'
+            buildConfigField 'String', 'START_PAGE', '"listener.html"'
+        }
+        studio {
+            dimension 'audience'
+            applicationId 'na.jamusic.studio'
+            resValue 'string', 'app_name', 'Ja Music Studio'
+            buildConfigField 'String', 'START_PAGE', '"artist.html"'
+        }
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    sourceSets {
+        main {
+            assets.srcDir "$buildDir/generated/jaMusicAssets"
+        }
+    }
+
+    packaging {
+        resources {
+            excludes += ['/META-INF/{AL2.0,LGPL2.1}']
+        }
+    }
+}
+
+// Copy the existing website's ORIGINAL, UNMODIFIED app HTML into both APKs.
+// They are read from the repository root; neither source file is edited.
+def syncWebAssets = tasks.register('syncJaMusicWebAssets', Copy) {
+    from(rootProject.projectDir.parentFile) {
+        include 'listener.html', 'artist.html', 'ja_music_dual_demo.html', 'ja_music_logo.png'
+    }
+    into "$buildDir/generated/jaMusicAssets"
+}
+tasks.configureEach { task ->
+    if (task.name.startsWith('merge') && task.name.endsWith('Assets')) {
+        task.dependsOn(syncWebAssets)
+    }
+}
+
+dependencies {
+    implementation 'androidx.webkit:webkit:1.12.1'
+}

@@ -1,0 +1,63 @@
+name: Build Ja Music Android APKs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'android/**'
+      - 'listener.html'
+      - 'artist.html'
+      - 'ja_music_dual_demo.html'
+      - 'ja_music_logo.png'
+      - '.github/workflows/build-android-apks.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-apks:
+    name: Build listener and artist APKs
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout website and unchanged prototypes
+        uses: actions/checkout@v4
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Set up Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Build two APK variants
+        working-directory: android
+        run: gradle --no-daemon :app:assembleListenerDebug :app:assembleStudioDebug
+      - name: Collect downloadable APKs
+        run: |
+          mkdir -p apk-output
+          cp android/app/build/outputs/apk/listener/debug/app-listener-debug.apk apk-output/Ja-Music-Listener.apk
+          cp android/app/build/outputs/apk/studio/debug/app-studio-debug.apk apk-output/Ja-Music-Studio.apk
+          sha256sum apk-output/*.apk > apk-output/SHA256SUMS.txt
+      - name: Upload Ja Music Listener APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Ja-Music-Listener-APK
+          path: apk-output/Ja-Music-Listener.apk
+          retention-days: 30
+      - name: Upload Ja Music Studio APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Ja-Music-Studio-APK
+          path: apk-output/Ja-Music-Studio.apk
+          retention-days: 30
+      - name: Upload both APKs and checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: Ja-Music-Android-Demo-Package
+          path: apk-output/
+          retention-days: 30
