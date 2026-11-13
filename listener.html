@@ -390,7 +390,7 @@ function go(id){
  if(id==='account')renderHistory();
  $(id)?.scrollTo(0,0);
 }
-function coverStyle(r){const palette=[['#f09d78','#9975ea','#ec9dc8'],['#2485b1','#7d85e0','#c2c0e8'],['#4274b0','#92b5d0','#dec7b5'],['#26a0a7','#6a83dd','#ab87df']];const c=palette[Math.abs(Number(r.color)||0)%palette.length];const photo=window.JA_GET_ART(r);return `--a:${c[0]};--b:${c[1]};--c:${c[2]}`+(photo?`;background-image:linear-gradient(0deg,rgba(9,22,42,.12),rgba(9,22,42,0) 65%),url("${photo}");background-size:cover;background-position:center`:``)}
+function coverStyle(r){const palette=[['#f09d78','#9975ea','#ec9dc8'],['#2485b1','#7d85e0','#c2c0e8'],['#4274b0','#92b5d0','#dec7b5'],['#26a0a7','#6a83dd','#ab87df']];const c=palette[Math.abs(Number(r.color)||0)%palette.length];const photo=window.JA_GET_ART(r);return `--a:${c[0]};--b:${c[1]};--c:${c[2]}`+(photo?`;background-image:linear-gradient(0deg,rgba(9,22,42,.12),rgba(9,22,42,0) 65%),url('${String(photo).replace(/'/g,'%27').replace(/"/g,'%22')}');background-size:cover;background-position:center`:``)}
 function coverHTML(r,extra='small'){return `<div class="cover ${extra}${window.JA_IS_BAKED(r)?' art-photo':''}" role="img" aria-label="${escapeHTML(r.title)} illustrative cover artwork" style="${coverStyle(r)}"><span>${escapeHTML(r.title).slice(0,28)}</span></div>`}
 function openRelease(id){let r=snap().releases.find(x=>x.id===id&&x.status==='Published');if(!r){notify('This release is still a draft');return}selectedId=id;go('album')}
 function renderProduct(){
