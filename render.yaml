@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: pulsetopup
+    runtime: docker
+    plan: starter
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_PATH
+        value: /var/data/store.db
+      - key: PUBLIC_URL
+        sync: false
+      - key: ADMIN_KEY
+        sync: false
+      - key: PAYMENT_MODE
+        value: demo
+      - key: FULFILLMENT_MODE
+        value: demo
+    disk:
+      name: order-database
+      mountPath: /var/data
+      sizeGB: 1
