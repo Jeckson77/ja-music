@@ -39,7 +39,7 @@
     });
     setSelected(products.find(p => p.badge === 'Popular') || products[0]);
   }
-  function statusHuman(s) { return ({ awaiting_payment: 'Awaiting payment', paid_awaiting_delivery: 'Paid · awaiting delivery', supplier_submitting: 'Sending to supplier', supplier_processing: 'Delivery processing', delivered: 'Delivered', demo_delivered: 'Simulation complete', delivery_failed: 'Delivery needs attention', refund_review: 'Refund under review' })[s] || s.replaceAll('_', ' '); }
+  function statusHuman(s) { return ({ awaiting_payment: 'Awaiting payment', paid_awaiting_delivery: 'Paid · awaiting delivery', supplier_submitting: 'Sending to supplier', supplier_processing: 'Delivery processing', delivered: 'Delivered', demo_delivered: 'Simulation complete', delivery_failed: 'Delivery needs attention', payment_failed: 'Payment unsuccessful', refund_review: 'Refund under review' })[s] || s.replaceAll('_', ' '); }
   function trackingHtml(order) {
     const ok = ['delivered', 'demo_delivered'].includes(order.status);
     const pending = ['awaiting_payment', 'paid_awaiting_delivery', 'supplier_submitting', 'supplier_processing'].includes(order.status);
@@ -82,19 +82,89 @@
   async function loadAdmin() {
     const key = $('adminKey').value;
     if (!key || key.length < 24) return toast('Enter the configured admin secret.');
-    state.adminKey = key; const box = $('adminContent'); box.textContent = 'Loading orders…';
-    try { const orders = await api('/admin/orders', { headers: { 'X-Admin-Key': key } });
-      box.replaceChildren(); if (!orders.length) { box.textContent = 'No orders yet.'; return; }
-      const summary = document.createElement('p'); summary.textContent = `${orders.length} most recent orders`; box.append(summary);
+    state.adminKey = key;
+    const box = $('adminContent'), productBox = $('adminProducts');
+    box.textContent = 'Loading dashboard…'; productBox.textContent = '';
+    try {
+      const auth = { headers: { 'X-Admin-Key': key } };
+      const [orders, readiness, products] = await Promise.all([
+        api('/admin/orders', auth), api('/admin/payment-readiness', auth), api('/admin/products', auth)
+      ]);
+      box.replaceChildren();
+      const title = document.createElement('h3'); title.textContent = 'Payment readiness'; box.append(title);
+      const ready = document.createElement('div'); ready.className = 'admin-readiness';
+      const checks = [
+        ['Checkout mode', readiness.mode],
+        ['Merchant keys', readiness.payment_keys_configured ? 'Configured' : 'Missing'],
+        ['Supplier authorization', readiness.supplier_authorized ? 'Confirmed' : 'Unconfirmed'],
+        ['Persistent order database', readiness.durable_storage_confirmed ? 'Confirmed' : 'Not confirmed'],
+        ['Catalogue prices', readiness.catalog_prices_approved ? 'Reviewed' : 'Not approved'],
+        ['Approved sale items', String(readiness.approved_active_products)],
+        ['Delivery process', readiness.fulfillment_mode],
+      ];
+      for (const [label, value] of checks) {
+        const line = document.createElement('div');
+        const name = document.createElement('b'); name.textContent = label;
+        const detail = document.createElement('span'); detail.textContent = value;
+        line.append(name, detail); ready.append(line);
+      }
+      box.append(ready);
+      const note = document.createElement('p'); note.textContent = 'Provider webhook: ' + readiness.webhook_url + '. Configure private keys in Render Environment, never in this browser.'; box.append(note);
+      const ordersTitle = document.createElement('h3'); ordersTitle.textContent = `Orders (${orders.length})`; box.append(ordersTitle);
+      if (!orders.length) { const none = document.createElement('p'); none.textContent = 'No orders yet.'; box.append(none); }
       for (const o of orders) {
         const el = document.createElement('div'); el.className = 'admin-order';
         el.innerHTML = `<strong>${esc(o.id)}</strong> · ${esc(o.title)} · ${money(o.price_cents)}<div>Player ID: <b>${esc(o.player_id)}</b> | ${esc(o.email)}</div><div>Status: ${esc(statusHuman(o.status))} · ${esc(o.created_at)}</div>`;
         const actions = document.createElement('div'); actions.className = 'admin-actions';
-        for (const [label, path] of [['Retry delivery', 'retry'], ['Reconcile', 'reconcile']]) { const b = document.createElement('button'); b.textContent = label; b.addEventListener('click', async () => { b.disabled = true; try { await api(`/admin/orders/${encodeURIComponent(o.id)}/${path}`, { method: 'POST', headers: { 'X-Admin-Key': state.adminKey } }); toast('Order checked.'); await loadAdmin(); } catch (e) { toast(e.message); } finally { b.disabled = false; } }); actions.append(b); }
-        if (state.meta?.fulfillment_mode === 'manual' && o.status === 'paid_awaiting_delivery') { const b = document.createElement('button'); b.textContent = 'Mark delivered'; b.addEventListener('click', async () => { const reference = prompt('Enter verified supplier fulfillment reference (min 4 characters):'); if (!reference || reference.length < 4) return; try { await api(`/admin/orders/${encodeURIComponent(o.id)}/fulfill`, { method: 'POST', headers: { 'X-Admin-Key': state.adminKey }, body: json({ reference }) }); await loadAdmin(); } catch (e) { toast(e.message); } }); actions.append(b); }
+        for (const [label, path] of [['Retry delivery', 'retry'], ['Reconcile', 'reconcile']]) {
+          const b = document.createElement('button'); b.textContent = label;
+          b.addEventListener('click', async () => {
+            b.disabled = true;
+            try { await api(`/admin/orders/${encodeURIComponent(o.id)}/${path}`, { method: 'POST', ...auth }); toast('Order checked.'); await loadAdmin(); }
+            catch (e) { toast(e.message); } finally { b.disabled = false; }
+          }); actions.append(b);
+        }
+        if (state.meta?.fulfillment_mode === 'manual' && o.status === 'paid_awaiting_delivery') {
+          const b = document.createElement('button'); b.textContent = 'Mark delivered';
+          b.addEventListener('click', async () => {
+            const reference = prompt('Enter verified supplier fulfillment reference (min 4 characters):');
+            if (!reference || reference.length < 4) return;
+            try { await api(`/admin/orders/${encodeURIComponent(o.id)}/fulfill`, { method: 'POST', ...auth, body: json({ reference }) }); await loadAdmin(); }
+            catch (e) { toast(e.message); }
+          }); actions.append(b);
+        }
         el.append(actions); box.append(el);
       }
-    } catch (e) { box.textContent = ''; toast(e.message); }
+      productBox.replaceChildren();
+      const productTitle = document.createElement('h3'); productTitle.textContent = 'Catalogue approval'; productBox.append(productTitle);
+      const guidance = document.createElement('p'); guidance.textContent = 'Starter prices are examples. Verify wholesale cost and your delivery rights before approving any real-money item.'; productBox.append(guidance);
+      for (const product of products) {
+        const row = document.createElement('form'); row.className = 'admin-product';
+        const label = document.createElement('strong'); label.textContent = product.title;
+        const input = document.createElement('input'); input.type = 'number'; input.step = '0.01'; input.min = '1'; input.value = (product.price_cents / 100).toFixed(2);
+        const labelPrice = document.createElement('label'); labelPrice.textContent = 'Retail N$'; labelPrice.append(input);
+        const cap = document.createElement('input'); cap.type = 'number'; cap.step = '0.01'; cap.min = '0'; cap.value = (product.max_wholesale_usd_cents / 100).toFixed(2);
+        const labelCap = document.createElement('label'); labelCap.textContent = 'Supplier max USD'; labelCap.append(cap);
+        const active = document.createElement('input'); active.type = 'checkbox'; active.checked = Boolean(product.active);
+        const activeLabel = document.createElement('label'); activeLabel.className = 'admin-checkbox'; activeLabel.append(active, document.createTextNode('Active'));
+        const approved = document.createElement('input'); approved.type = 'checkbox'; approved.checked = Boolean(product.price_approved);
+        const approvedLabel = document.createElement('label'); approvedLabel.className = 'admin-checkbox'; approvedLabel.append(approved, document.createTextNode('Price approved'));
+        const save = document.createElement('button'); save.type = 'submit'; save.textContent = 'Save';
+        row.append(label, labelPrice, labelCap, activeLabel, approvedLabel, save);
+        row.addEventListener('submit', async e => {
+          e.preventDefault(); save.disabled = true;
+          try {
+            await api(`/admin/products/${encodeURIComponent(product.id)}`, { method: 'PUT', ...auth, body: json({
+              price_cents: Math.round(Number(input.value) * 100),
+              max_wholesale_usd_cents: Math.round(Number(cap.value) * 100),
+              active: active.checked, price_approved: approved.checked
+            }) });
+            toast('Product saved. Approval does not activate live payments.');
+            await loadAdmin();
+          } catch (err) { toast(err.message); } finally { save.disabled = false; }
+        }); productBox.append(row);
+      }
+    } catch (e) { box.textContent = ''; productBox.textContent = ''; toast(e.message); }
   }
   function wire() {
     $('year').textContent = new Date().getFullYear();

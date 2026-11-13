@@ -8,9 +8,9 @@ A functional **Namibia-first, mobile-friendly top-up storefront** with a dark vi
 
 **Requires real merchant credentials:** SELCOM hosted checkout in Namibia. Supports SELCOM test and live keys; card details are entered on the payment provider's page, never on the site.
 
-**Requires verified supply access and permission:** real Blood Strike credit delivery. Supports a GameCore B2B API adapter for **eligible** supply accounts or staff-verified manual fulfillment. A public supplier catalogue alone does not grant access, prove game-publisher authorization, or guarantee availability. Contact Blood Strike/NetEase and the proposed supplier to establish permission before accepting live payments. Prices in the starter catalogue are **illustrative and not validated wholesale-backed prices**.
+**Requires verified supply access and permission:** real Blood Strike credit delivery. Supports a GameCore B2B API adapter for **eligible** supply accounts or staff-verified manual fulfillment. A public supplier catalogue alone does not grant access, prove game-publisher authorization, or guarantee availability. Contact Blood Strike/NetEase and the proposed supplier to establish permission before accepting live payments. Prices in the starter catalogue are **illustrative and not validated wholesale-backed prices**. Every SKU must now be individually approved in the admin catalogue before live mode lists it.
 
-Do not advertise instant delivery until the integration is verified on the *live* merchant account and replenished supplier wallet. The application refuses to start in `selcom_live` mode without appropriate credentials and explicit operator approval.
+Do not advertise instant delivery until the integration is verified on the *live* merchant account and replenished supplier wallet. The application refuses to start in `selcom_live` mode without appropriate credentials, durable-storage confirmation and explicit operator approval. Without those items it is a demo, even if publicly hosted.
 
 ## Run locally (Windows, Mac, Linux)
 
@@ -64,6 +64,14 @@ For `gamecore_live`, set `GAMECORE_KEY` to an approved live key, `GAMECORE_WEBHO
 
 Supplier webhooks need correct signatures; the gamecore integration should be revalidated against your account's webhook format prior to production. The current sample handles one `id_only` line per retail order; do not add multi-SKU bundles without extending the one-to-many supplier order model. A periodic reconciliation worker, support queue, refunds, transaction ledger, real receipt email, rate limiting/CAPTCHA, access controls, automated monitoring, privacy/consumer-law review, merchant policies, and penetration testing are recommended before public launch.
 
+## Moving this deployed store to real payments
+
+See **[REAL_PAYMENTS_SETUP.md](REAL_PAYMENTS_SETUP.md)** for the exact safe activation sequence on the current Render deployment and required provider-side settings. There are NO real merchant credentials in this repository. Do not put secret keys in GitHub, browser JavaScript, a chat message, screenshots or order notes.
+
+The admin dashboard shows readiness indicators and allows manual review, pricing and approval per Gold pack. The operator must still provide a legal supplier, make sure Gold delivery can happen, and verify purchase/refund terms. A sandbox or simulated payment is not a financial transaction.
+
+**Important:** Render Free has an ephemeral filesystem. This SQLite implementation MUST be moved onto an attached persistent disk on a paid Render web service (with regular backups) before accepting real payments. Setting `DURABLE_STORAGE_CONFIRMED=true` without actually provisioning the disk risks losing paid orders. The app cannot independently prove that a container path is persistent.
+
 ## Live setup checklist
 
 - SELCOM live merchant approval, verified NAD payment settlement and settlement bank account
@@ -77,7 +85,7 @@ Supplier webhooks need correct signatures; the gamecore integration should be re
 
 ## Deploy on Render
 
-Import the project as a GitHub repository and select **Blueprint** with `render.yaml`, or create a Docker Web Service. Blueprint mounts persistent storage at `/var/data/store.db` for SQLite. Keep **one** Uvicorn worker while using SQLite, or move to managed Postgres for scaling. Configure `PUBLIC_URL=https://your-real-service-url.onrender.com`, a long random `ADMIN_KEY`, and keep `PAYMENT_MODE=demo`, `FULFILLMENT_MODE=demo` until the live setup is complete. Test with `curl https://your-real-service-url.onrender.com/api/health`.
+Import the project as a GitHub repository and select **Blueprint** with `render.yaml`, or create a Docker Web Service. The supplied Blueprint proposes a paid starter plan with a disk mounted at `/var/data` for SQLite; applying it may incur charges. The current deployed Free web service has **no persistent disk**. Keep **one** Uvicorn worker while using SQLite, or move to managed Postgres for scaling. Configure `PUBLIC_URL=https://your-real-service-url.onrender.com`, a long random `ADMIN_KEY`, and keep `PAYMENT_MODE=demo`, `FULFILLMENT_MODE=demo` until the live setup is complete. Test with `curl https://your-real-service-url.onrender.com/api/health`.
 
 ## Testing
 

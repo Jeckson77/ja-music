@@ -17,7 +17,7 @@ import uuid
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Literal
+from urllib.parse import urlparse
 
 import httpx
 from fastapi import BackgroundTasks, FastAPI, Header, HTTPException, Request
@@ -40,6 +40,9 @@ ADMIN_KEY = os.getenv('ADMIN_KEY', '')
 SHOP_NAME = os.getenv('SHOP_NAME', 'PulseTopup')
 SUPPLY_AUTHORIZATION_CONFIRMED = os.getenv('SUPPLY_AUTHORIZATION_CONFIRMED', 'false').lower() == 'true'
 CATALOG_PRICES_APPROVED = os.getenv('CATALOG_PRICES_APPROVED', 'false').lower() == 'true'
+# Explicit operator gate: free Render instances have ephemeral disks. Never accept real
+# payments unless a persistent disk/database and backups have been provisioned.
+DURABLE_STORAGE_CONFIRMED = os.getenv('DURABLE_STORAGE_CONFIRMED', 'false').lower() == 'true'
 SELCOM_PK = os.getenv('SELCOM_PK', '')
 SELCOM_SK = os.getenv('SELCOM_SK', '')
 SELCOM_WEBHOOK_SECRET = os.getenv('SELCOM_WEBHOOK_SECRET', '')
@@ -62,6 +65,7 @@ if PAYMENT_MODE == 'selcom_live':
         'SELCOM_WEBHOOK_SECRET': bool(SELCOM_WEBHOOK_SECRET),
         'SUPPLY_AUTHORIZATION_CONFIRMED': SUPPLY_AUTHORIZATION_CONFIRMED,
         'CATALOG_PRICES_APPROVED': CATALOG_PRICES_APPROVED,
+        'DURABLE_STORAGE_CONFIRMED': DURABLE_STORAGE_CONFIRMED,
         'live fulfillment': FULFILLMENT_MODE in ('gamecore_live', 'manual'),
         'ADMIN_KEY length>=24': len(ADMIN_KEY) >= 24,
     }
@@ -125,7 +129,8 @@ def init_db():
             supplier_product_id INTEGER NOT NULL,
             max_wholesale_usd_cents INTEGER NOT NULL DEFAULT 0,
             badge TEXT NOT NULL DEFAULT '',
-            active INTEGER NOT NULL DEFAULT 1
+            active INTEGER NOT NULL DEFAULT 1,
+            price_approved INTEGER NOT NULL DEFAULT 0
         );
         CREATE TABLE IF NOT EXISTS orders (
             id TEXT PRIMARY KEY,
@@ -154,6 +159,10 @@ def init_db():
             order_id TEXT, action TEXT NOT NULL, note TEXT, created_at TEXT NOT NULL
         );
         ''')
+        # Older demo databases need an additive migration; default to not approved.
+        columns = {col['name'] for col in c.execute('PRAGMA table_info(products)')}
+        if 'price_approved' not in columns:
+            c.execute('ALTER TABLE products ADD COLUMN price_approved INTEGER NOT NULL DEFAULT 0')
         for row in SEED_PRODUCTS:
             c.execute('INSERT OR IGNORE INTO products (id,title,gold,price_cents,supplier_product_id,max_wholesale_usd_cents,badge) VALUES (?,?,?,?,?,?,?)', row)
 
@@ -229,9 +238,14 @@ async def selcom_get(intent_id: str):
 
 def verify_payment_payload(order, p):
     ref = p.get('merchantReference') or p.get('reference')
+    try:
+        amount = int(p.get('amount', -1))
+    except (ValueError, TypeError):
+        amount = -1
     if (p.get('status') != 'SUCCEEDED' or ref != order['id'] or
-        int(p.get('amount', -1)) != order['price_cents'] or p.get('currency') != 'NAD' or
-        p.get('intentId') != order['payment_intent']):
+        amount != order['price_cents'] or p.get('currency') != 'NAD' or
+        p.get('intentId') != order['payment_intent'] or
+        (p.get('livemode') is not None and bool(p['livemode']) != (PAYMENT_MODE == 'selcom_live'))):
         raise HTTPException(409, 'Payment did not match the order')
 
 
@@ -342,11 +356,14 @@ class PriceChange(BaseModel):
     price_cents: int = Field(ge=100, le=5_000_000)
     max_wholesale_usd_cents: int = Field(ge=0, le=1_000_000)
     active: bool
+    # Explicit per-product approval (the sample prices are not real supplier quotes).
+    price_approved: bool = False
 
 
 @app.get('/api/health')
 def health():
-    return {'ok': True, 'payment_mode': PAYMENT_MODE, 'fulfillment_mode': FULFILLMENT_MODE}
+    return {'ok': True, 'payment_mode': PAYMENT_MODE, 'fulfillment_mode': FULFILLMENT_MODE,
+            'storage_gate': DURABLE_STORAGE_CONFIRMED}
 
 
 @app.get('/api/meta')
@@ -362,7 +379,8 @@ def meta():
 @app.get('/api/products')
 def products():
     with db() as c:
-        return [row_dict(r) for r in c.execute('SELECT id,title,gold,price_cents,badge FROM products WHERE active=1 ORDER BY gold')]
+        where = 'active=1 AND price_approved=1' if PAYMENT_MODE == 'selcom_live' else 'active=1'
+        return [row_dict(r) for r in c.execute(f'SELECT id,title,gold,price_cents,badge FROM products WHERE {where} ORDER BY gold')]
 
 
 @app.post('/api/orders', status_code=201)
@@ -376,7 +394,7 @@ def create_order(body: NewOrder):
     if not body.confirmed_player_id or not body.accepted_terms:
         raise HTTPException(422, 'Please confirm the ID and accept the terms')
     with db() as c:
-        product = c.execute('SELECT * FROM products WHERE id=? AND active=1', (body.product_id,)).fetchone()
+        product = c.execute('SELECT * FROM products WHERE id=? AND active=1' + (' AND price_approved=1' if PAYMENT_MODE == 'selcom_live' else ''), (body.product_id,)).fetchone()
         if not product:
             raise HTTPException(404, 'Product is unavailable')
         order_id = 'PT-' + secrets.token_hex(7).upper()
@@ -427,8 +445,13 @@ async def checkout(order_id: str, body: OrderEmail, background_tasks: Background
             response = r.json().get('data', {})
     except (httpx.HTTPError, ValueError) as exc:
         raise HTTPException(502, 'Payment service did not create a session; try again shortly') from exc
-    if not response.get('intentId') or not response.get('checkoutUrl', '').startswith('https://'):
-        raise HTTPException(502, 'Payment provider did not return a hosted checkout URL')
+    url = response.get('checkoutUrl') or ''
+    host = urlparse(url)
+    expected_host = 'checkout.selcom.com.na' if PAYMENT_MODE == 'selcom_live' else 'checkout-uat.selcom.com.na'
+    if not response.get('intentId') or host.scheme != 'https' or host.hostname != expected_host or host.username or host.password:
+        raise HTTPException(502, 'Payment provider did not return a trusted hosted checkout URL')
+    if response.get('merchantReference') not in (None, order_id):
+        raise HTTPException(502, 'Payment provider order reference mismatch')
     with db() as c:
         c.execute('UPDATE orders SET payment_intent=?,checkout_url=?,updated_at=? WHERE id=? AND payment_intent IS NULL',
                   (response['intentId'], response['checkoutUrl'], utcnow(), order_id))
@@ -449,7 +472,63 @@ async def refresh_payment(order_id: str, body: OrderEmail, background_tasks: Bac
         verify_payment_payload(order, payment)
         if record_paid(order_id, payment['intentId'], 'server_side_lookup'):
             background_tasks.add_task(dispatch_supplier, order_id)
+    elif payment.get('status') == 'FAILED':
+        with db() as c:
+            updated = c.execute("UPDATE orders SET status='payment_failed',updated_at=? WHERE id=? AND status='awaiting_payment'",
+                                (utcnow(), order_id)).rowcount
+            if updated:
+                audit(c, order_id, 'payment_failed', 'server_side_lookup')
     return order_public(need_order(order_id, body.email))
+
+
+def apply_selcom_event(event_key: str, event: str, payload: dict) -> tuple[bool, bool]:
+    """Atomically deduplicate and update a matching order; retry on any failure.
+
+    Returns (is_duplicate, newly_paid). Only verified webhook data should call this.
+    """
+    order_id = payload.get('merchantReference') or payload.get('reference')
+    try:
+        amount = int(payload.get('amount', -1))
+    except (TypeError, ValueError):
+        amount = -1
+    with db() as c:
+        c.execute('BEGIN IMMEDIATE')
+        if c.execute('SELECT 1 FROM processed_events WHERE id=?', ('selcom:' + event_key,)).fetchone():
+            c.execute('COMMIT')
+            return True, False
+        order = c.execute('SELECT * FROM orders WHERE id=?', (order_id,)).fetchone()
+        if not order:
+            c.execute('ROLLBACK')
+            raise HTTPException(409, 'Unknown order')
+        if (payload.get('currency') != 'NAD' or amount != order['price_cents'] or
+            not order['payment_intent'] or payload.get('intentId') != order['payment_intent'] or
+            (payload.get('livemode') is not None and bool(payload['livemode']) != (PAYMENT_MODE == 'selcom_live'))):
+            c.execute('ROLLBACK')
+            raise HTTPException(409, 'Webhook/payment mismatch')
+        changed = False
+        if event == 'payment.succeeded':
+            if payload.get('status') != 'SUCCEEDED':
+                c.execute('ROLLBACK')
+                raise HTTPException(409, 'Payment success event not confirmed')
+            if order['status'] == 'awaiting_payment':
+                c.execute('UPDATE orders SET status=?,updated_at=? WHERE id=?',
+                          ('paid_awaiting_delivery', utcnow(), order_id))
+                audit(c, order_id, 'payment_confirmed', 'signed_selcom_webhook')
+                changed = True
+        elif event in ('payment.refunded', 'payment.partially_refunded'):
+            if order['status'] in ('paid_awaiting_delivery','supplier_submitting','supplier_processing','delivered','delivery_failed'):
+                c.execute("UPDATE orders SET status='refund_review',updated_at=? WHERE id=?", (utcnow(), order_id))
+                audit(c, order_id, event, 'Refund requires fulfillment/stock review')
+        # payment.failed is a terminal payment event, but no fulfillment is attempted.
+        # A failed order stays visible for investigation; create a new order to retry.
+        elif event == 'payment.failed':
+            if order['status'] == 'awaiting_payment':
+                c.execute("UPDATE orders SET status='payment_failed', updated_at=? WHERE id=?", (utcnow(), order_id))
+                audit(c, order_id, 'payment_failed', 'Provider ended payment')
+        c.execute('INSERT INTO processed_events(id,provider,created_at) VALUES (?,?,?)',
+                  ('selcom:' + event_key, 'selcom', utcnow()))
+        c.execute('COMMIT')
+    return False, changed
 
 
 @app.post('/api/webhooks/selcom')
@@ -458,35 +537,29 @@ async def selcom_webhook(request: Request, background_tasks: BackgroundTasks):
     if not signature_ok(raw, SELCOM_WEBHOOK_SECRET, request.headers.get('X-Selcom-Timestamp'),
                         request.headers.get('X-Selcom-Signature')):
         raise HTTPException(401, 'Invalid signature')
-    data = json.loads(raw)
+    if PAYMENT_MODE == 'demo':
+        raise HTTPException(403, 'No payment provider configured')
+    try:
+        data = json.loads(raw)
+        if not isinstance(data, dict):
+            raise ValueError('Unexpected JSON payload')
+    except (ValueError, TypeError) as exc:
+        raise HTTPException(400, 'Invalid JSON payload') from exc
     if data.get('test') is True:
         return {'ok': True, 'ignored': 'webhook tester'}
     event = data.get('event', '')
-    payload = data.get('data') or {}
-    event_key = request.headers.get('X-Selcom-Idempotency-Key') or hashlib.sha256(raw).hexdigest()
     if event not in ('payment.succeeded','payment.failed','payment.refunded','payment.partially_refunded'):
         return {'ok': True, 'ignored': 'other event'}
-    order_id = payload.get('merchantReference') or payload.get('reference')
-    with db() as c:
-        order = c.execute('SELECT * FROM orders WHERE id=?', (order_id,)).fetchone()
-    if not order:
-        raise HTTPException(409, 'Unknown order')
-    if (payload.get('currency') != 'NAD' or int(payload.get('amount', -1)) != order['price_cents'] or
-        payload.get('intentId') != order['payment_intent']):
-        raise HTTPException(409, 'Webhook/payment mismatch')
-    with db() as c:
-        try:
-            c.execute('INSERT INTO processed_events(id,provider,created_at) VALUES (?,?,?)', ('selcom:' + event_key, 'selcom', utcnow()))
-        except sqlite3.IntegrityError:
-            return {'ok': True, 'duplicate': True}
-    if event == 'payment.succeeded' and payload.get('status') == 'SUCCEEDED':
-        if record_paid(order_id, payload['intentId'], 'signed_selcom_webhook'):
-            background_tasks.add_task(dispatch_supplier, order_id)
-    elif event in ('payment.refunded','payment.partially_refunded'):
-        with db() as c:
-            c.execute("UPDATE orders SET status='refund_review',updated_at=? WHERE id=? AND status IN ('paid_awaiting_delivery','supplier_processing','delivered','delivery_failed')", (utcnow(), order_id))
-            audit(c, order_id, event, 'Refund requires manual stock reconciliation')
-    return {'ok': True}
+    payload = data.get('data') or {}
+    if not isinstance(payload, dict):
+        raise HTTPException(400, 'Invalid payment payload')
+    event_key = request.headers.get('X-Selcom-Idempotency-Key') or hashlib.sha256(raw).hexdigest()
+    if len(event_key) > 240:
+        raise HTTPException(400, 'Invalid delivery identifier')
+    duplicate, newly_paid = apply_selcom_event(event_key, event, payload)
+    if newly_paid:
+        background_tasks.add_task(dispatch_supplier, payload.get('merchantReference') or payload.get('reference'))
+    return {'ok': True, 'duplicate': duplicate}
 
 
 @app.post('/api/webhooks/gamecore')
@@ -534,6 +607,25 @@ def admin_orders(x_admin_key: str | None = Header(default=None)):
         return [row_dict(r) for r in c.execute('''SELECT o.*,p.title FROM orders o JOIN products p ON p.id=o.product_id ORDER BY o.created_at DESC LIMIT 250''')]
 
 
+@app.get('/api/admin/payment-readiness')
+def payment_readiness(x_admin_key: str | None = Header(default=None)):
+    need_admin(x_admin_key)
+    with db() as c:
+        approved = c.execute('SELECT count(*) FROM products WHERE active=1 AND price_approved=1').fetchone()[0]
+    return {
+        'mode': PAYMENT_MODE,
+        'processor': 'SELCOM',
+        'payment_keys_configured': bool(SELCOM_PK and SELCOM_SK and SELCOM_WEBHOOK_SECRET),
+        'supplier_authorized': SUPPLY_AUTHORIZATION_CONFIRMED,
+        'catalog_prices_approved': CATALOG_PRICES_APPROVED,
+        'approved_active_products': approved,
+        'durable_storage_confirmed': DURABLE_STORAGE_CONFIRMED,
+        'fulfillment_mode': FULFILLMENT_MODE,
+        'webhook_url': PUBLIC_URL + '/api/webhooks/selcom',
+        'payments_active': PAYMENT_MODE == 'selcom_live',
+    }
+
+
 @app.get('/api/admin/products')
 def admin_products(x_admin_key: str | None = Header(default=None)):
     need_admin(x_admin_key)
@@ -545,8 +637,8 @@ def admin_products(x_admin_key: str | None = Header(default=None)):
 def update_product(product_id: str, change: PriceChange, x_admin_key: str | None = Header(default=None)):
     need_admin(x_admin_key)
     with db() as c:
-        n = c.execute('UPDATE products SET price_cents=?,max_wholesale_usd_cents=?,active=? WHERE id=?',
-                      (change.price_cents, change.max_wholesale_usd_cents, int(change.active), product_id)).rowcount
+        n = c.execute('UPDATE products SET price_cents=?,max_wholesale_usd_cents=?,active=?,price_approved=? WHERE id=?',
+                      (change.price_cents, change.max_wholesale_usd_cents, int(change.active), int(change.price_approved), product_id)).rowcount
     if not n:
         raise HTTPException(404, 'Product not found')
     return {'ok': True}
