@@ -1,0 +1,29 @@
+{
+  "framework": "vanilla-html-css-js",
+  "targets": [
+    "Ja Music Listener",
+    "Ja Music Studio",
+    "Ja Music website",
+    "two-phone simulator"
+  ],
+  "styling": [
+    "existing-liquid-glass-theme",
+    "frontend-website.css",
+    "frontend-app.css"
+  ],
+  "testCommand": "node scripts/check-frontends.mjs",
+  "sourceRepo": "dawidolko/frontend-skills",
+  "sourceReference": "https://github.com/dawidolko/frontend-skills",
+  "rulesApplied": [
+    "responsive/viewport-meta",
+    "responsive/reflow",
+    "responsive/dynamic-viewport-units",
+    "a11y/focus-visible",
+    "a11y/control-name",
+    "a11y/target-size",
+    "css/reduced-motion",
+    "perf/img-dimensions",
+    "seo/canonical-valid",
+    "seo/og-absolute-url"
+  ]
+}
