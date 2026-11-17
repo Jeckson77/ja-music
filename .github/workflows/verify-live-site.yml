@@ -1,0 +1,40 @@
+name: Verify Ja Music Public Website
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'frontend-website.css'
+      - 'listener.html'
+      - 'artist.html'
+      - 'ja_music_dual_demo.html'
+      - '.github/workflows/verify-live-site.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-public-site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Verify production reflects current design
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="https://ja-music-namibia.onrender.com"
+          for attempt in $(seq 1 20); do
+            echo "Checking published website attempt $attempt"
+            curl -fsSL --max-time 30 "$ROOT/?ja-version=6" -o /tmp/ja-home.html || true
+            curl -fsSL --max-time 30 "$ROOT/frontend-website.css?ja-version=6" -o /tmp/ja-design.css || true
+            curl -fsSL --max-time 30 "$ROOT/listener.html?ja-version=6" -o /tmp/ja-listener.html || true
+            if grep -q "ja-live-showcase" /tmp/ja-home.html 2>/dev/null &&
+               grep -q "ja-design-strip" /tmp/ja-design.css 2>/dev/null &&
+               grep -q "ja-v6-feature" /tmp/ja-listener.html 2>/dev/null; then
+              echo "PASS: production homepage, styling and listener app show visual refresh"
+              curl -fIsS --max-time 30 "$ROOT/assets/demo-covers/katutura-nights.webp" | head -5
+              exit 0
+            fi
+            sleep 12
+          done
+          echo "::error::Public deployment is stale or inaccessible. Check Render auto-deploy settings."
+          exit 1
