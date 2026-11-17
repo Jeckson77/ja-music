@@ -1,0 +1,59 @@
+/* Frontend Skills: product polish, accessible focus, 320px reflow and reduced motion */
+:root{--ja-ink:#132643;--ja-text:#586d88;--ja-blue:#335ff3;--ja-gold:#b77b20;--ja-ring:#2456e8}
+html{-webkit-text-size-adjust:100%}
+body{overflow-x:clip}
+a,button,summary{touch-action:manipulation}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--ja-ring);outline-offset:4px}
+.skip:focus{top:12px;left:12px;border-radius:12px;box-shadow:0 10px 30px rgba(30,54,104,.2)}
+.nav-links a:focus-visible{border-radius:9px}
+.nav-action{min-height:44px}
+.menu-toggle{width:46px;height:46px;flex-shrink:0}
+.hero-copy{position:relative;z-index:2}
+.hero-lead,.mission-right>p,.about-story>p{color:#4e617c}
+.hero-proof{color:#596e89}
+.preview-shell{box-shadow:0 30px 75px rgba(41,68,131,.17),inset 0 1px 0 rgba(255,255,255,.94)}
+.hero-phones{aspect-ratio:920/837;object-fit:cover}
+.app-card{box-shadow:0 20px 50px rgba(40,66,119,.12),inset 0 1px 0 #fff;transition:transform .2s ease,box-shadow .2s ease}
+.app-card:focus-within,.app-card:hover{transform:translateY(-3px);box-shadow:0 26px 60px rgba(38,61,120,.17)}
+.listener-card{background:linear-gradient(150deg,#e6f0ff 0%,#f1f7ff 55%,#e0ebff 100%)}
+.studio-card{background:linear-gradient(155deg,#fff2dd 0%,#fff8e9 60%,#f3e3c9 100%)}
+.studio-card .app-chip{color:#876018}
+.studio-card .card-bottom>a{color:#98651b}
+.studio-card .app-art{filter:saturate(.9)}
+.app-symbol.app-brand-icon{object-fit:cover;aspect-ratio:1;border-radius:17px;box-shadow:0 12px 25px rgba(25,50,105,.18);border:1px solid rgba(255,255,255,.82)}
+.card-bottom>a{min-width:44px;min-height:44px}
+.value-card,.workflow-card,.status-panel{border-color:#fff;box-shadow:0 12px 35px rgba(40,65,118,.08)}
+.value-card{transition:transform .2s ease}
+.value-card:hover{transform:translateY(-3px)}
+.faq-answers summary{min-height:56px}
+.faq-answers details[open]{background:linear-gradient(95deg,rgba(232,239,255,.53),transparent 80%);border-radius:12px}
+.faq-answers p a,.text-link{border-bottom:1px solid currentColor}
+.demo-iframe-box{box-shadow:0 24px 65px rgba(42,71,130,.13)}
+.demo-iframe{display:block;max-width:100%;background:#f8faff}
+.demo-instruction-panel li{overflow-wrap:anywhere}
+.demo-page-controls a,.demo-below a{min-height:44px;display:inline-flex;align-items:center}
+.footer-columns a{min-height:25px}
+@media(max-width:700px){
+ .hero-art{min-width:0}
+ .hero-phones{width:100%;height:auto}
+ .preview-shell{max-width:100%}
+ .floating-note{max-width:52%}
+ .closing-card h2{overflow-wrap:anywhere}
+ .demo-iframe-heading{flex-wrap:wrap;row-gap:7px}
+ .demo-instruction-panel ol{display:grid;gap:10px}
+ .footer-columns{flex-wrap:wrap}
+}
+@media(max-width:350px){
+ .container{width:calc(100% - 24px)}
+ .hero h1{font-size:clamp(2.7rem,11vw,3.5rem);letter-spacing:-.09em}
+ .heading-row h2,.display-title{letter-spacing:-.065em}
+ .btn{white-space:normal;text-align:center;min-height:44px}
+ .hero-actions{align-items:stretch}
+ .nav-wrap .logo small{display:none}
+ .app-card{padding:20px}
+ .demo-iframe{min-height:870px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+ .reveal{opacity:1!important;transform:none!important}
+}
