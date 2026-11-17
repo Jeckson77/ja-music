@@ -68,3 +68,34 @@ body>*{position:relative}
 @media(max-width:700px){.nav-links{background:#101b30;border:1px solid #344765;box-shadow:0 25px 55px #0008}.nav-links>a{color:#f0f4ff}.hero{padding-top:54px}.hero h1{font-size:clamp(3rem,11vw,4.6rem)}.ja-showcase{min-height:285px}.ja-showcase::after{background:linear-gradient(90deg,#081429eb,#08142977 78%,transparent)}}
 @media(max-width:380px){.hero h1{font-size:clamp(2.7rem,11vw,3.2rem)}.logo small{display:none}}
 @media(prefers-reduced-motion:reduce){.ja-showcase{transition:none}.ja-showcase:hover{transform:none}}
+
+
+/* Interactive product experience: intentionally distinct from existing cards */
+.ja-experience{padding:96px 0 110px;position:relative}
+.ja-experience-heading{display:flex;align-items:end;justify-content:space-between;gap:40px;margin-bottom:34px}
+.ja-experience-kicker,.ja-experience-index{font-size:11px;letter-spacing:.22em;font-weight:800;color:#9db4ff}
+.ja-experience-heading h2{font-size:clamp(2.6rem,5.3vw,5.6rem);letter-spacing:-.065em;line-height:1.04;margin:17px 0 0;color:#fff}
+.ja-experience-heading h2 em{font-style:normal;color:#b5a5ff}
+.ja-experience-heading>p{max-width:320px;color:#aebcd5;line-height:1.75}
+.ja-experience-tabs{display:inline-flex;gap:6px;padding:6px;background:#111b2e;border:1px solid #33425d;border-radius:999px;margin-bottom:26px}
+.ja-experience-tab{appearance:none;border:0;border-radius:999px;padding:14px 22px;color:#aebcd5;background:transparent;font:inherit;font-weight:750;cursor:pointer;transition:background .2s,color .2s}
+.ja-experience-tab.is-active{background:#edf1ff;color:#121d36;box-shadow:0 4px 18px #0005}
+.ja-experience-panel{display:grid;grid-template-columns:1fr 1fr;align-items:center;min-height:475px;border-radius:30px;overflow:hidden;border:1px solid #3b4d6d;background:linear-gradient(125deg,#162d5a 0%,#0e1b36 58%,#142043 100%);box-shadow:0 25px 70px #0006}
+.ja-experience-panel[hidden]{display:none}
+#ja-panel-artist{background:linear-gradient(125deg,#4a351c,#231e23 58%,#34251d)}
+.ja-experience-content{padding:clamp(28px,5vw,74px)}
+.ja-experience-content h3{font-size:clamp(2.5rem,4vw,4.6rem);letter-spacing:-.065em;line-height:1.05;color:#fff;margin:18px 0}
+.ja-experience-content p{max-width:400px;color:#c1cee7;line-height:1.75}
+.ja-experience-pills{display:flex;gap:9px;flex-wrap:wrap;margin:24px 0 34px}
+.ja-experience-pills span{border:1px solid #7183a566;border-radius:100px;padding:8px 14px;font-size:12px;color:#dce6fc}
+.ja-experience-cta{display:inline-flex;gap:35px;align-items:center;justify-content:space-between;background:#fff;color:#17284e;padding:15px 22px;border-radius:13px;font-weight:800;text-decoration:none}
+.ja-experience-cta:hover{background:#dfe7ff;color:#17284e}
+.ja-experience-visual{position:relative;display:grid;place-items:center;min-height:475px;background:radial-gradient(circle at center,#667ec944 0%,transparent 65%)}
+#ja-panel-artist .ja-experience-visual{background:radial-gradient(circle at center,#d5a55e44 0%,transparent 65%)}
+.ja-experience-visual img{width:min(73%,350px);height:auto;aspect-ratio:1;object-fit:cover;border-radius:20px;transform:rotate(6deg);box-shadow:24px 28px 0 #060b1699,0 45px 75px #0009;transition:transform .35s ease}
+.ja-experience-panel:hover .ja-experience-visual img{transform:rotate(2deg) scale(1.035)}
+.ja-record-label{position:absolute;bottom:27px;right:24px;left:24px;display:flex;justify-content:space-between;gap:12px;color:#dce7ff;font-size:10px;font-weight:800;letter-spacing:.16em}
+.ja-record-label span{color:#a8bbeb}
+@media(max-width:800px){.ja-experience-heading{display:block}.ja-experience-heading>p{max-width:550px}.ja-experience-panel{grid-template-columns:1fr}.ja-experience-visual{min-height:340px}.ja-experience-visual img{width:min(62%,260px)}.ja-experience{padding:64px 0}}
+@media(max-width:480px){.ja-experience-tab{padding:12px 15px;font-size:13px}.ja-experience-panel{border-radius:22px}.ja-experience-content{padding:30px 25px}.ja-experience-visual{min-height:290px}.ja-record-label{font-size:8px}.ja-experience-heading h2{font-size:2.55rem}}
+@media(prefers-reduced-motion:reduce){.ja-experience-tab,.ja-experience-visual img{transition:none}.ja-experience-panel:hover .ja-experience-visual img{transform:none}}
