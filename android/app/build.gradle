@@ -55,7 +55,7 @@ android {
 // They are read from the repository root; neither source file is edited.
 def syncWebAssets = tasks.register('syncJaMusicWebAssets', Copy) {
     from(rootProject.projectDir.parentFile) {
-        include 'listener.html', 'artist.html', 'ja_music_dual_demo.html', 'ja_music_logo.png'
+        include 'listener.html', 'artist.html', 'ja_music_dual_demo.html', 'ja_music_logo.png', 'frontend-app.css', 'frontend-app.js'
         include 'assets/demo-covers/**'
     }
     into "$buildDir/generated/jaMusicAssets"
