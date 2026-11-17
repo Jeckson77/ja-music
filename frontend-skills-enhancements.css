@@ -1,0 +1,37 @@
+/* Front-End Skills: focused usability refinements for Ja Music.
+   Motion is purposeful, focus remains visible, and narrow screens reflow. */
+:root{--ja-ease:cubic-bezier(.2,.8,.2,1)}
+:where(a,button,summary,input,select,textarea):focus-visible{outline:3px solid #164bdb;outline-offset:3px}
+:where(.btn,.primary-action,.ja-showcase a,.nav-action){transition:transform .22s var(--ja-ease),box-shadow .22s var(--ja-ease),background-color .22s ease}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+ :where(.btn,.primary-action,.ja-showcase a,.nav-action):hover{transform:translateY(-2px)}
+ :where(.btn,.primary-action,.ja-showcase a,.nav-action):active{transform:translateY(0)}
+}
+:where(.btn,.primary-action,.ja-showcase a,.nav-action):focus-visible{outline-offset:5px}
+:target{scroll-margin-top:105px}
+.demo-access{overflow-wrap:anywhere}
+.demo-access code{white-space:normal;overflow-wrap:anywhere}
+.demo-iframe{width:100%;border:0}
+.demo-instruction-panel ol{padding-inline-start:1.3rem}
+.demo-instruction-panel li{line-height:1.6}
+.demo-caption{line-height:1.7}
+.demo-page-controls{flex-wrap:wrap}
+@media(max-width:600px){
+ .demo-page-hero{min-width:0}
+ .demo-page-hero h1{overflow-wrap:break-word}
+ .demo-page-controls{display:flex;gap:12px}
+ .demo-iframe{min-height:900px}
+ .ja-showcase-copy{min-width:0}
+}
+@media(max-width:380px){
+ .demo-access{display:grid;gap:8px}
+ .demo-page-controls a{max-width:100%;white-space:normal}
+}
+@media(prefers-reduced-motion:reduce){
+ :where(.btn,.primary-action,.ja-showcase a,.nav-action){transition:none!important;transform:none!important}
+}
+@media(forced-colors:active){
+ :where(.btn,.primary-action,.nav-action,.ja-showcase a){border:1px solid ButtonText}
+ :where(a,button,summary):focus-visible{outline:3px solid Highlight}
+ .live-pip,.indicator{border:1px solid CanvasText}
+}
