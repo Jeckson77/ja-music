@@ -57,3 +57,38 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var
  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
  .reveal{opacity:1!important;transform:none!important}
 }
+
+
+/* JA MUSIC / visible homepage refresh: new listening showcase */
+.ja-design-strip{background:#10284b;color:#f8fbff;border-bottom:1px solid #203f70}
+.ja-design-strip .container{min-height:52px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.ja-design-strip strong{font-size:.72rem;letter-spacing:.11em;text-transform:uppercase}
+.ja-design-strip span{font-size:.76rem;color:#c9d8f4}
+.ja-design-strip a{color:#fff;font-size:.75rem;font-weight:800;border:1px solid #89b0ff77;border-radius:20px;padding:9px 14px;white-space:nowrap;transition:background .2s}
+.ja-design-strip a:hover{background:#294d85}
+.ja-design-strip .ja-design-dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:#76eacb;box-shadow:0 0 0 4px #76eacb22;margin-right:9px}
+.ja-live-showcase{margin:2px auto 85px;display:grid;grid-template-columns:1fr 1fr;gap:21px;align-items:stretch}
+.ja-showcase{border-radius:30px;position:relative;isolation:isolate;overflow:hidden;min-height:350px;display:flex;align-items:flex-end;padding:28px 30px;box-shadow:0 24px 55px #1c35562a;border:1px solid #ffffffa0;transition:transform .2s ease,box-shadow .2s ease}
+.ja-showcase:hover{transform:translateY(-5px);box-shadow:0 30px 60px #1c35563b}
+.ja-showcase>img{position:absolute;width:57%;max-height:290px;object-fit:cover;border-radius:24px;top:28px;right:24px;transform:rotate(8deg);box-shadow:0 16px 45px #13233f55;z-index:-1;opacity:.97}
+.ja-showcase-listener{background:linear-gradient(132deg,#112c68 4%,#3161bb 58%,#9fc6fd 100%);color:#fff}
+.ja-showcase-studio{background:linear-gradient(132deg,#4b2e11 4%,#bd8232 56%,#ffe2a2 100%);color:#fff}
+.ja-showcase::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,15,37,.60),rgba(4,15,37,.12) 70%,transparent);z-index:-1}
+.ja-showcase .ja-showcase-copy{position:relative;z-index:2;max-width:66%}
+.ja-showcase .ja-showcase-overline{font-size:10px;letter-spacing:2px;font-weight:850;color:#f6fcffcc}
+.ja-showcase h3{font-size:clamp(26px,3.6vw,43px);letter-spacing:-1.8px;margin:12px 0 8px;line-height:1.03}
+.ja-showcase p{font-size:13px;line-height:1.6;color:#fffdf4e0;margin-bottom:20px}
+.ja-showcase a{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:12px 16px;border-radius:13px;background:#ffffffed;color:#14294a;font-weight:850;font-size:12px;box-shadow:0 9px 20px #0c1d353c}
+.ja-showcase-studio a{color:#63410f}
+.ja-showcase-label{margin:10px auto 18px;color:#405c86;font-size:12px;font-weight:800;letter-spacing:.16em}
+@media(max-width:700px){
+.ja-design-strip .container{min-height:58px;flex-wrap:wrap;padding-block:8px}
+.ja-design-strip strong{font-size:.65rem}
+.ja-design-strip span{display:none}
+.ja-live-showcase{grid-template-columns:1fr;gap:14px;margin-bottom:46px}
+.ja-showcase{min-height:275px;padding:25px}
+.ja-showcase>img{width:51%;right:10px;top:20px}
+.ja-showcase .ja-showcase-copy{max-width:75%}
+.ja-showcase h3{font-size:34px}
+}
+@media(max-width:350px){.ja-design-strip a{font-size:.65rem;padding:8px 10px}.ja-showcase{min-height:270px}.ja-showcase>img{width:57%}.ja-showcase .ja-showcase-copy{max-width:83%}}
