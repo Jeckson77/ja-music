@@ -1,0 +1,58 @@
+/* Ja Music frontend-skills pass | mobile reflow, focus, readable glass, reduced motion */
+:root{--ja-focus:#2357eb;--ja-card-border:rgba(255,255,255,.91);--ja-elevated:0 10px 30px rgba(38,61,114,.12),inset 0 1px 0 rgba(255,255,255,.85)}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{overflow-x:hidden}
+button,input,select,textarea{font:inherit}
+button{touch-action:manipulation}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--ja-focus);outline-offset:3px}
+.phone{isolation:isolate}
+.phone .page{overscroll-behavior-y:contain;padding-bottom:max(1.5rem,env(safe-area-inset-bottom))}
+.phone .page .head,.phone .page .between,.phone .page .row-card{min-width:0}
+.phone .page .head h2,.phone .page h2,.phone .page h3{overflow-wrap:anywhere}
+.phone .row-card{display:flex;gap:.8rem;align-items:center;min-width:0}
+.phone .row-card>div:not(.cover){min-width:0}
+.phone .row-card b,.phone .row-card small{overflow-wrap:anywhere}
+.phone .cover{flex-shrink:0;background-size:cover;background-position:center}
+.phone .cover.art-photo{box-shadow:0 11px 27px rgba(22,44,80,.20),inset 0 1px 0 rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.68)}
+.phone .cover.art-photo span{font-size:clamp(.65rem,2vw,.9rem);text-shadow:0 1px 10px rgba(0,0,0,.5)}
+.phone .glass{border-color:var(--ja-card-border);box-shadow:var(--ja-elevated)}
+.phone .primary,.phone .secondary{min-height:44px}
+.phone .nav.polished-nav{height:72px;left:12px;right:12px;bottom:max(9px,env(safe-area-inset-bottom));padding:7px;border-radius:25px;background:rgba(250,252,255,.91);box-shadow:0 10px 34px rgba(24,44,88,.22),inset 0 1px rgba(255,255,255,.99);border:1px solid rgba(255,255,255,.95)}
+.phone .nav.polished-nav button{min-height:52px;height:56px;border-radius:17px;gap:3px;font-size:.67rem;font-weight:720;line-height:1.12;color:#51647c}
+.phone .nav.polished-nav button.active{color:#254ddb;background:linear-gradient(155deg,#e4edff,#eff0ff);box-shadow:inset 0 0 0 1px rgba(80,113,230,.13)}
+.phone .nav.polished-nav .nav-icon-wrap{display:grid;place-items:center;width:24px;height:24px}
+.phone .nav.polished-nav .nav-icon{width:20px;height:20px;stroke-width:1.9}
+.phone .nav.polished-nav button:focus-visible{outline-offset:-2px}
+.phone .page{bottom:calc(88px + env(safe-area-inset-bottom))}
+.phone .toast{max-width:calc(100% - 32px)}
+.phone .auth-screen{padding-bottom:max(20px,env(safe-area-inset-bottom))}
+.phone .auth-card,.phone .auth-demo{box-shadow:var(--ja-elevated)}
+.phone .auth-input,.phone .field,.phone input[type=tel],.phone input[type=text],.phone input[type=email],.phone textarea{min-height:44px;max-width:100%}
+.phone .gift-flow,.phone .gift-receipt{max-width:100%}
+.phone .gift-code{overflow-wrap:anywhere;user-select:all}
+body[data-ja-app="studio"] .phone .nav.polished-nav button.active{color:#8d5612;background:linear-gradient(145deg,#fff2cb,#fff7e4);box-shadow:inset 0 0 0 1px rgba(194,138,38,.19)}
+body[data-ja-app="studio"]{--ja-focus:#97600c}
+@media(max-width:760px){
+ .shell{width:100%;max-width:none;min-height:100dvh;padding:0}
+ .workspace{display:block;width:100%;max-width:none}
+ .intro{display:none}
+ .phone{width:100%;max-width:none;height:100dvh;min-height:0;border:0;border-radius:0;box-shadow:none}
+ .phone .status{top:max(12px,env(safe-area-inset-top));z-index:6}
+ .phone .page{padding-top:calc(61px + env(safe-area-inset-top));padding-left:clamp(14px,4vw,22px);padding-right:clamp(14px,4vw,22px)}
+ .phone .auth-screen{padding-top:calc(18px + env(safe-area-inset-top))}
+ .phone .nav.polished-nav{left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right))}
+}
+@media(min-width:761px) and (max-width:990px){
+ .workspace{grid-template-columns:minmax(0,1fr) minmax(340px,390px);gap:22px}
+ .phone{max-width:100%}
+ .shell{padding:18px}
+}
+@media(max-width:350px){
+ .phone .nav.polished-nav{left:6px;right:6px;padding:5px;gap:1px}
+ .phone .nav.polished-nav button{font-size:.61rem;padding-inline:0;min-width:0}
+ .phone .nav.polished-nav .nav-icon{width:19px;height:19px}
+ .phone .row-card{gap:8px}
+}
+@media(prefers-reduced-motion:reduce){
+ .phone *, .phone *::before,.phone *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
