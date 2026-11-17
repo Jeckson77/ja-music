@@ -1,0 +1,26 @@
+name: Frontend Quality Checks
+on:
+  push:
+    branches: [main]
+    paths:
+      - '*.html'
+      - '*.css'
+      - '*.js'
+      - 'android/app/build.gradle'
+      - 'scripts/check-frontends.mjs'
+      - '.github/workflows/frontend-quality.yml'
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check app, website and two-phone bundle
+        run: node scripts/check-frontends.mjs
