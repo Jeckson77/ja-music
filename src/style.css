@@ -5,3 +5,67 @@
 
 /* Official Ja Music identity across desktop and mobile */
 .brand{display:inline-flex;align-items:center;gap:9px}.brand-logo{display:block;width:42px;height:42px;object-fit:contain;flex-shrink:0;border-radius:10px}.brand-wordmark{display:inline-flex;align-items:baseline}.footer .brand-logo{width:44px;height:44px}@media(max-width:480px){.brand-logo{width:36px;height:36px}.brand{gap:7px}}
+
+/* Professional interface refinement: restrained motion, typography and responsive ergonomics */
+:root{color-scheme:dark;--surface:#101a2e;--surface-raised:#16243e;--line:#ffffff22;--accent:#9cb7ff}
+body{overflow-x:hidden;-webkit-font-smoothing:antialiased}
+button,a{-webkit-tap-highlight-color:transparent}
+button:disabled{cursor:not-allowed;opacity:.55}
+::selection{background:#8caaff;color:#091225}
+.nav{max-width:1190px}
+.header{box-shadow:0 8px 32px #00000019}
+.brand{letter-spacing:-.06em}
+.links button{position:relative;transition:color .2s ease}
+.links button::after{content:"";position:absolute;left:0;right:0;bottom:-5px;height:2px;background:#a5baff;transform:scaleX(0);transform-origin:left;transition:transform .2s ease}
+.links button:hover::after,.links button:focus-visible::after{transform:scaleX(1)}
+.nav-cta,.btn{transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s ease,background-color .2s ease}
+.nav-cta:hover,.btn:hover{transform:translateY(-2px)}
+.primary:hover{box-shadow:0 16px 42px #4e6efa55}
+.hero{isolation:isolate}
+.hero-copy{position:relative;z-index:2}
+.hero-copy h1{max-width:11ch;text-wrap:balance}
+.hero-copy>p,.section-head>p{line-height:1.75}
+.hero-art{isolation:isolate}
+.album{transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+.hero-art:hover .album-front{transform:translate(-23%,12%) rotate(-7deg)}
+.hero-art:hover .album-back{transform:translate(24%,-25%) rotate(12deg)}
+.feature,.steps article,.choose{transition:border-color .2s ease,box-shadow .25s ease,transform .25s ease}
+.feature:hover,.steps article:hover{border-color:#91aaff88;box-shadow:0 24px 60px #00000030;transform:translateY(-3px)}
+.feature h3,.steps h3{text-wrap:balance}
+.feature>a,.vision a{min-height:44px}
+.faq-item button:hover{color:#bcd0ff}
+.faq-item p{padding-bottom:18px}
+.choice-tabs button{transition:background-color .2s ease,border-color .2s ease,transform .2s ease}
+.choice-tabs button:hover{border-color:#c2d3ff}
+.choice-tabs button:active{transform:scale(.98)}
+.footer-grid a,.footer-grid button{min-height:36px}
+.demo-page h1{text-wrap:balance}
+.demo-frame-wrap{box-shadow:0 26px 80px #0005}
+@media(max-width:760px){
+  body.menu-open{overflow:hidden}
+  .links.open{box-shadow:0 28px 50px #0008;max-height:calc(100dvh - 70px);overflow-y:auto}
+  .links button,.mobile-demo{min-height:48px}
+  .hero-copy h1{max-width:none}
+  .hero-art:hover .album-front{transform:translate(-23%,12%) rotate(-10deg)}
+  .hero-art:hover .album-back{transform:translate(24%,-25%) rotate(15deg)}
+  .section-head h2,.artist-grid h2,.vision h2,.choose h2{text-wrap:balance}
+  .feature:hover,.steps article:hover{transform:none}
+  .footer-grid{gap:30px}
+}
+@media(max-width:460px){
+  .brand-wordmark{font-size:19px}
+  .nav{gap:8px}
+  .nav-cta{min-height:44px}
+  .hero{padding-top:48px}
+  .hero h1{font-size:clamp(2.85rem,12vw,3.5rem)}
+  .hero-proof{align-items:flex-start}
+  .closing{padding:68px 20px}
+  .demo-page{padding-top:65px}
+  .demo-page h1{font-size:clamp(2.8rem,12vw,4rem)}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .hero-art:hover .album-front{transform:translate(-23%,12%) rotate(-10deg)}
+  .hero-art:hover .album-back{transform:translate(24%,-25%) rotate(15deg)}
+  .feature:hover,.steps article:hover,.nav-cta:hover,.btn:hover{transform:none}
+}
