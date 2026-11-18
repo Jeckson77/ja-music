@@ -104,3 +104,9 @@ em{background:linear-gradient(110deg,#fff 10%,#ff83bc 92%);-webkit-background-cl
 .faq-item button span{color:var(--jm-pink)}
 :focus-visible{outline-color:#ff80bd}
 @media(prefers-reduced-motion:reduce){.primary:hover{box-shadow:none}}
+
+/* React Bits 3D gallery, fitted to the Ja Music discovery section. */
+.carousel-showcase{padding-top:20px}
+.carousel-stage{overflow:hidden;isolation:isolate;border:1px solid #ffffff26;border-radius:28px;background:radial-gradient(ellipse at 50% 54%,#172b50 0%,#080b17 76%);box-shadow:0 24px 70px #0003}
+.carousel-hint{margin:16px 0 0;text-align:center;color:#a9b9d7;font-size:13px}
+@media(max-width:760px){.carousel-showcase{padding-top:0}.carousel-stage{border-radius:20px}}
