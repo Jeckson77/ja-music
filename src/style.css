@@ -69,3 +69,38 @@ button:disabled{cursor:not-allowed;opacity:.55}
   .hero-art:hover .album-back{transform:translate(24%,-25%) rotate(15deg)}
   .feature:hover,.steps article:hover,.nav-cta:hover,.btn:hover{transform:none}
 }
+
+/* Palette inspired by supplied video: navy + white + one hot-pink accent.
+   Deliberately keep pink as a sparing CTA/highlight color, not a rainbow gradient. */
+:root{--jm-navy:#0f193b;--jm-ink:#080f27;--jm-white:#fff;--jm-pink:#f72585;--jm-muted:#b6c4e2;--jm-border:#ffffff24}
+html,body{background:var(--jm-ink);color:var(--jm-white)}
+.header{background:#0f193bf2;border-bottom-color:var(--jm-border)}
+.links.open{background:var(--jm-navy)}
+.brand-dot,.kicker,.marquee b,.step-number,.vision a{color:var(--jm-pink)}
+em{background:linear-gradient(110deg,#fff 10%,#ff83bc 92%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.primary{background:var(--jm-pink);color:#fff;box-shadow:0 13px 35px #f7258538}
+.primary:hover{background:#ff4098;box-shadow:0 16px 44px #f7258550}
+.nav-cta{background:#fff;color:var(--jm-navy)}
+.nav-cta:hover{background:#ffe8f3}
+.hero-copy>p,.section-head>p,.artist-grid>div>p,.vision p{color:var(--jm-muted)}
+.hero-proof .avatars{color:#fff;background:#26375f}
+.orbit{background:radial-gradient(circle,#f7258529 0%,#263e7d33 46%,transparent 70%)}
+.now-playing{background:#152448eb;border-color:#ffffff3a}
+.now-playing>span{background:var(--jm-pink)}
+.spark{color:var(--jm-pink)}
+.marquee{background:#121f43;border-block-color:#ffffff20}
+.marquee span{color:#dbe4fa}
+.feature.listener{background:linear-gradient(145deg,#203967,#0e1936 82%);border-color:#ffffff2b}
+.feature.studio{background:linear-gradient(145deg,#39284a,#141b38 82%);border-color:#ffffff2b}
+.artist-section,.vision{background:var(--jm-navy);border-block-color:#ffffff20}
+.artist-list>div>span,.step-icon{background:#283d70;color:#fff}
+.steps article{background:#121e3d;border-color:#ffffff22}
+.choose{background:linear-gradient(135deg,#182b58,#0f193b);border-color:#ffffff2a}
+.choice-tabs button.active{background:#fff;color:var(--jm-navy)}
+.choice-tabs button:hover{border-color:#ff8ec6}
+.closing{background:radial-gradient(ellipse at 90% 0%,#f7258540,transparent 54%),linear-gradient(120deg,#1d356b,#0f193b);border-color:#ffffff30}
+.footer{background:#080e21;border-top-color:#ffffff20}
+.footer-bottom{border-top-color:#ffffff20}
+.faq-item button span{color:var(--jm-pink)}
+:focus-visible{outline-color:#ff80bd}
+@media(prefers-reduced-motion:reduce){.primary:hover{box-shadow:none}}
