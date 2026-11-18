@@ -5,6 +5,8 @@ import { join } from 'node:path';
 // Keep the existing functional Listener / Studio demo accessible while its
 // UI is migrated into React. Do not overwrite React's generated index.html.
 export default defineConfig({
+  // React Bits uses JSX without importing the React namespace in every file.
+  esbuild: { jsx: 'automatic' },
   base: process.env.GITHUB_PAGES === 'true' ? '/ja-music/' : '/',
   publicDir: false,
   build: {
