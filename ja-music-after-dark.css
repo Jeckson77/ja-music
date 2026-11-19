@@ -99,3 +99,25 @@ body>*{position:relative}
 @media(max-width:800px){.ja-experience-heading{display:block}.ja-experience-heading>p{max-width:550px}.ja-experience-panel{grid-template-columns:1fr}.ja-experience-visual{min-height:340px}.ja-experience-visual img{width:min(62%,260px)}.ja-experience{padding:64px 0}}
 @media(max-width:480px){.ja-experience-tab{padding:12px 15px;font-size:13px}.ja-experience-panel{border-radius:22px}.ja-experience-content{padding:30px 25px}.ja-experience-visual{min-height:290px}.ja-record-label{font-size:8px}.ja-experience-heading h2{font-size:2.55rem}}
 @media(prefers-reduced-motion:reduce){.ja-experience-tab,.ja-experience-visual img{transition:none}.ja-experience-panel:hover .ja-experience-visual img{transform:none}}
+
+/* Landing page hierarchy and interaction refinements */
+.hero{min-height:650px;padding-top:52px;padding-bottom:64px;gap:48px}
+.hero h1{font-size:clamp(3.4rem,5.1vw,5.5rem);line-height:1.04;letter-spacing:-.06em;margin:25px 0}
+.hero-lead{line-height:1.7;max-width:500px}
+.hero-disclaimer{margin:18px 0 0;color:#c0cce0;font-size:13px}
+.hero-art{min-height:540px}
+.hero-orb{opacity:.35}
+.preview-shell{transform:none;box-shadow:0 30px 75px #0008}
+.hero-phones{max-height:none;object-fit:contain}
+.ja-experience{padding-top:70px}
+.ja-experience-index,.ja-experience-kicker,.eyebrow,.section-kicker{font-size:12px;letter-spacing:.14em}
+.ja-experience-panel{box-shadow:0 20px 55px #0005}
+#ja-panel-artist{background:linear-gradient(125deg,#513621,#241d26 65%,#211a22)}
+.btn,.ja-experience-cta,.nav-action,.ja-experience-tab{transition:transform 150ms cubic-bezier(.23,1,.32,1),background-color 150ms ease,box-shadow 150ms ease,color 150ms ease}
+.btn:active,.ja-experience-cta:active,.nav-action:active,.ja-experience-tab:active{transform:scale(.98)}
+@media (prefers-reduced-motion:no-preference){.reveal{opacity:1;transform:none;transition:none}}
+@media (hover:none), (pointer:coarse){.btn:hover,.value-card:hover,.app-card:hover,.ja-experience-panel:hover .ja-experience-visual img{transform:none}}
+@media(max-width:850px){.hero{min-height:0}.hero h1{font-size:clamp(3.1rem,7vw,4.8rem)}.hero-art{min-height:0}}
+@media(max-width:700px){.hero{padding-top:40px;padding-bottom:48px;gap:36px}.hero h1{font-size:clamp(2.9rem,10vw,4.2rem)}.ja-experience{padding-top:32px}.hero-disclaimer{margin-top:14px}}
+@media(prefers-reduced-motion:reduce){.btn:active,.ja-experience-cta:active,.nav-action:active,.ja-experience-tab:active{transform:none}}
+.hero-phones{height:auto}
