@@ -110,3 +110,10 @@ em{background:linear-gradient(110deg,#fff 10%,#ff83bc 92%);-webkit-background-cl
 .carousel-stage{overflow:hidden;isolation:isolate;border:1px solid #ffffff26;border-radius:28px;background:radial-gradient(ellipse at 50% 54%,#172b50 0%,#080b17 76%);box-shadow:0 24px 70px #0003}
 .carousel-hint{margin:16px 0 0;text-align:center;color:#a9b9d7;font-size:13px}
 @media(max-width:760px){.carousel-showcase{padding-top:0}.carousel-stage{border-radius:20px}}
+
+/* React Bits silk waves: decorative layer below hero content. */
+.hero{position:relative;isolation:isolate}
+.hero-waves{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none;opacity:.28}
+.hero-waves .pattern-waves{width:100%;height:100%;pointer-events:auto}
+.hero-copy,.hero-art{position:relative;z-index:1}
+@media(prefers-reduced-motion:reduce){.hero-waves{display:none}}
