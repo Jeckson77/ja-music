@@ -12,11 +12,12 @@
   <link rel="icon" href="assets/ja-music-listener-icon.png" type="image/png">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="frontend-website.css?v=20261117-6"><link rel="stylesheet" href="ja-music-after-dark.css?v=20261117-dark1">
+  <link rel="stylesheet" href="editorial.css?v=20261119-1">
   <title>Ja Music — Say Ja to Local Music</title>
 <link rel="canonical" href="https://ja-music-namibia.onrender.com/">
 <meta property="og:url" content="https://ja-music-namibia.onrender.com/">
 </head>
-<body>
+<body class="home-page">
   <a class="skip" href="#main">Skip to content</a>
   <div class="progress" id="progress" aria-hidden="true"></div>
   <header class="site-header" id="top">
@@ -35,27 +36,24 @@
   </header>
 
   <main id="main">
-    <section class="hero section container" aria-labelledby="heroTitle">
-      <div class="hero-halo" aria-hidden="true"></div>
-      <div class="hero-copy reveal">
-        <div class="eyebrow"><span class="eyebrow-star">✳</span> BORN IN NAMIBIA <span class="eyebrow-line"></span> BUILT FOR LOCAL MUSIC</div>
-        <h1 id="heroTitle">Namibian music.<br><em>More ways to be heard.</em></h1>
-        <p class="hero-lead">A better connection between Namibian artists and the people who love their music. Two apps, one bold vision, and more opportunities for our own voices to be heard.</p>
-        <div class="hero-actions"><a href="demo.html" class="btn btn-primary"><span class="btn-symbol">▶</span> Try the interactive demo <span aria-hidden="true">↗</span></a><a href="#why" class="btn btn-outline">Discover our story <span aria-hidden="true">↓</span></a></div>
-        <p class="hero-disclaimer">Interactive prototype · No real payments</p>
+    <section class="hero container" aria-labelledby="heroTitle">
+      <div class="hero-copy">
+        <div class="hero-kicker"><span class="hero-kicker-dot"></span> A NEW HOME FOR NAMIBIAN MUSIC</div>
+        <h1 id="heroTitle">Our sound.<br><em>Our stage.</em></h1>
+        <p class="hero-lead">A place for Namibian artists to share their music and for listeners to discover the sounds that feel like home.</p>
+        <div class="hero-actions"><a href="demo.html" class="btn btn-primary">Explore the demo <span aria-hidden="true">↗</span></a><a href="#apps" class="hero-secondary">See how it works <span aria-hidden="true">↓</span></a></div>
+        <p class="hero-disclaimer"><span aria-hidden="true">✳</span> Interactive prototype · No real payments</p>
       </div>
-      <div class="hero-art reveal" aria-label="Preview of the Ja Music and Ja Music Studio app designs">
-        <div class="hero-orb orb-a"></div><div class="hero-orb orb-b"></div>
-        <div class="preview-shell">
-          <div class="preview-top"><span><i></i> INTERACTIVE APP PREVIEW</span><span>CONNECTED PROTOTYPE</span></div>
-          <img class="hero-phones" src="assets/ja-music-phones.webp" width="920" height="837" alt="Ja Music listener and artist Studio applications shown on two phone screens" fetchpriority="high">
-          <div class="preview-foot"><span><span class="indicator"></span> Listener + Studio connected</span><span>Tap to explore <span aria-hidden="true">↗</span></span></div>
-          <a href="demo.html" class="preview-hotspot" aria-label="Launch the two-app Ja Music prototype"></a>
-        </div>
+      <div class="hero-art" aria-label="Sample music artwork from the Ja Music prototype">
+        <div class="hero-art-backdrop" aria-hidden="true"></div>
+        <img class="hero-cover" src="assets/demo-covers/katutura-nights.webp" width="640" height="640" alt="Sample release artwork for Katutura Nights">
+        <div class="hero-cover-caption"><span>THE SOUND OF HOME</span><span>01 / 03</span></div>
+        <div class="hero-art-note"><span>♫</span><div><b>Made for the music</b><small>Built for Namibia</small></div></div>
       </div>
     </section>
+    <div class="sound-strip" aria-label="Ja Music connects artists and listeners"><div class="container"><span>LOCAL VOICES</span><i>✳</i><span>NEW DISCOVERIES</span><i>✳</i><span>MORE POSSIBILITY</span><i>✳</i><span>MADE IN NAMIBIA</span></div></div>
 <section class="ja-experience container" id="apps" aria-labelledby="jaExperienceTitle">
-  <div class="ja-experience-heading"><div><span class="ja-experience-kicker">FIND YOUR FREQUENCY / 001</span><h2 id="jaExperienceTitle">One platform.<br><em>Two ways to move music.</em></h2></div><p>Whether you're here to discover your next favourite track or release your own sound, your journey starts here.</p></div>
+  <div class="ja-experience-heading"><div><span class="ja-experience-kicker">FIND YOUR FREQUENCY / 01</span><h2 id="jaExperienceTitle">Two sides.<br><em>One music community.</em></h2></div><p>Whether you're here to discover your next favourite track or release your own sound, your journey starts here.</p></div>
   <div class="ja-experience-tabs" role="tablist" aria-label="Choose your Ja Music experience">
     <button type="button" class="ja-experience-tab is-active" id="ja-tab-listener" role="tab" aria-selected="true" aria-controls="ja-panel-listener" tabindex="0" data-ja-tab="listener"><span aria-hidden="true">◉</span> I'm a listener</button>
     <button type="button" class="ja-experience-tab" id="ja-tab-artist" role="tab" aria-selected="false" aria-controls="ja-panel-artist" tabindex="-1" data-ja-tab="artist"><span aria-hidden="true">✦</span> I'm an artist</button>
@@ -70,7 +68,7 @@
     </section>
     <section class="section flow-section container" id="experience" aria-labelledby="flowTitle"><div class="section-kicker reveal"><span class="number">02 /</span> SEE THE CONNECTION</div><div class="heading-row reveal"><h2 class="display-title" id="flowTitle">From the studio<br>to someone's <span class="accent-text">playlist.</span></h2><p>The current prototype demonstrates an entire creator-to-listener journey, from publishing a release to a simulated sale.</p></div>
       <div class="workflow reveal"><article class="workflow-card"><div class="step-top"><span>01</span><span class="step-icon">↥</span></div><h3>An artist publishes.</h3><p>In Studio, a creator prepares an original release, adds pricing and publishes it to the shared demo catalogue.</p></article><div class="connector" aria-hidden="true">→</div><article class="workflow-card"><div class="step-top"><span>02</span><span class="step-icon">⌕</span></div><h3>A listener discovers.</h3><p>The release appears in Ja Music, where fans can search, preview the experience and explore the artist.</p></article><div class="connector" aria-hidden="true">→</div><article class="workflow-card"><div class="step-top"><span>03</span><span class="step-icon">↗</span></div><h3>Both apps update.</h3><p>A simulated purchase adds it to the listener's library and updates Studio's sales and earnings ledger.</p></article></div>
-      <div class="flow-bottom reveal"><div><strong>A connected experience you can actually try.</strong><span>The prototype runs locally with shared browser data or an optional SQLite-backed demonstration server.</span></div><a class="btn btn-primary" href="demo.html">Try the full experience <span aria-hidden="true">↗</span></a></div>
+      <div class="flow-bottom reveal"><div><strong>A connected experience you can actually try.</strong><span>Publish a sample release, discover it as a listener, and see a simulated purchase update both sides.</span></div><a class="btn btn-primary" href="demo.html">Try the full experience <span aria-hidden="true">↗</span></a></div>
     </section>
     <section class="section demo-feature" id="showcase" aria-labelledby="demoTitle"><div class="container demo-layout"><div class="demo-copy reveal"><div class="section-kicker light"><span class="number">03 /</span> LIVE PROTOTYPE</div><h2 id="demoTitle">Don't just<br>imagine it.<br><em>Experience it.</em></h2><p>Two interactive phone apps. A connected catalogue. Simulated sales and artist earnings. Switch between both sides of the music ecosystem and see how Ja Music works.</p><div class="demo-trust"><span>✓ App-to-app syncing</span><span>✓ Interactive release publishing</span><span>✓ Simulated N$ purchases</span></div><a href="demo.html" class="btn btn-light">Open the interactive demo <span aria-hidden="true">↗</span></a><small>Prototype only. No real payment, royalties, commercial streaming or airtime billing takes place.</small></div><div class="demo-art reveal"><img src="assets/purchase-flow.webp" width="1440" height="1504" loading="lazy" alt="Connected Ja Music demonstration showing a simulated purchase and artist earnings"><span class="demo-image-label">JA MUSIC · CONNECTED DEMO</span></div></div></section>
     <section class="section about-section container" id="about" aria-labelledby="aboutTitle"><div class="section-kicker reveal"><span class="number">04 /</span> ABOUT JA MUSIC</div><div class="about-layout"><div class="reveal"><h2 class="display-title" id="aboutTitle">We're here<br>to say <span class="accent-text">Ja.</span></h2><div class="about-quote">“Say Ja to Local Music.”</div></div><div class="about-story reveal"><h3>Rooted in Namibia. Focused on possibility.</h3><p>Ja Music is a Namibian digital music marketplace concept with one simple ambition: help local artists earn from their creativity and give listeners an accessible way to support the music they love.</p><p>We're exploring how technology, local-first product design and future payment partnerships could make music discovery and purchasing feel more natural for Namibians. The listener app and artist Studio are our proof-of-concept for that vision.</p><div class="about-person"><img src="ja_music_logo.png" width="60" height="60" alt="Ja Music logo"><span><b>Erican Ashipala</b><small>Project contact · Ja Music</small><a href="mailto:erican16@gmail.com">erican16@gmail.com ↗</a></span></div></div></div></section>
