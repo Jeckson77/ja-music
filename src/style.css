@@ -117,3 +117,6 @@ em{background:linear-gradient(110deg,#fff 10%,#ff83bc 92%);-webkit-background-cl
 .hero-waves .pattern-waves{width:100%;height:100%;pointer-events:auto}
 .hero-copy,.hero-art{position:relative;z-index:1}
 @media(prefers-reduced-motion:reduce){.hero-waves{display:none}}
+
+/* Interactive Ja Music TechText wordmark */
+.tech-wordmark-section{padding-top:70px;padding-bottom:80px;text-align:center}.tech-wordmark{height:clamp(180px,29vw,330px);width:100%;position:relative;margin:12px auto 0;color:#fff}.tech-wordmark-section>p{font-size:13px;color:#b6c4e2}.tech-wordmark .tech-text{cursor:grab}@media(max-width:760px){.tech-wordmark-section{padding-top:30px;padding-bottom:45px}.tech-wordmark{height:190px}}@media(prefers-reduced-motion:reduce){.tech-wordmark{pointer-events:none}}
