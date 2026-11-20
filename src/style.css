@@ -120,3 +120,28 @@ em{background:linear-gradient(110deg,#fff 10%,#ff83bc 92%);-webkit-background-cl
 
 /* Interactive Ja Music TechText wordmark */
 .tech-wordmark-section{padding-top:70px;padding-bottom:80px;text-align:center}.tech-wordmark{height:clamp(180px,29vw,330px);width:100%;position:relative;margin:12px auto 0;color:#fff}.tech-wordmark-section>p{font-size:13px;color:#b6c4e2}.tech-wordmark .tech-text{cursor:grab}@media(max-width:760px){.tech-wordmark-section{padding-top:30px;padding-bottom:45px}.tech-wordmark{height:190px}}@media(prefers-reduced-motion:reduce){.tech-wordmark{pointer-events:none}}
+
+/* Ja Music project story, team and contact */
+.about-lead{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;margin-bottom:24px}
+.about-lead>div,.about-grid article,.team-grid article,.model-note,.contact-panel{border:1px solid #ffffff24;background:#111f40;border-radius:22px}
+.about-lead>div{padding:32px;background:linear-gradient(145deg,#1b3261,#101a35)}
+.about-lead h3,.about-grid h3,.team-grid h3,.contact-details h3{font-size:21px;letter-spacing:-.04em;margin-bottom:10px}
+.about-lead p,.about-grid p,.team-grid p,.model-note p,.contact-panel p{color:#c0cce4;margin-bottom:0}
+.about-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.about-grid article{padding:27px}
+.model-note{margin-top:22px;padding:30px;background:#1c2545;border-left:4px solid #f72585}
+.model-note>b{font-size:20px}.model-note p{margin:12px 0 0}
+.team-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.team-grid article{padding:25px;min-width:0}
+.team-monogram{display:grid;place-items:center;width:54px;height:54px;border-radius:15px;background:#f7258528;color:#ff89c0;font-weight:800;font-size:20px;margin-bottom:25px}
+.team-grid h3{margin-bottom:4px}.team-grid p{font-size:13px;margin-bottom:20px}
+.team-grid a,.contact-details a{display:block;color:#d9e5ff;overflow-wrap:anywhere;margin-top:10px;font-size:14px}
+.team-grid a:hover,.contact-details a:hover{text-decoration:underline}
+.contact-panel{display:grid;grid-template-columns:1.1fr .9fr;gap:55px;padding:clamp(28px,5vw,65px);background:radial-gradient(ellipse at 10% 10%,#f7258520,transparent 55%),#101d3b}
+.contact-panel h2{font-size:clamp(2.7rem,4.5vw,4.8rem);line-height:1.09;letter-spacing:-.06em;margin:20px 0}
+.contact-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.contact-details{border-left:1px solid #ffffff30;padding-left:35px;align-self:center}
+.contact-details h3:not(:first-child){margin-top:28px}
+.contact-disclaimer{font-size:12px;border-top:1px solid #ffffff25;padding-top:16px;margin-top:20px}
+@media(max-width:950px){.team-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.about-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.contact-panel{gap:25px}}
+@media(max-width:650px){.about-lead,.about-grid,.team-grid,.contact-panel{grid-template-columns:1fr}.about-lead>div,.about-grid article,.team-grid article{padding:23px}.contact-details{border-left:0;border-top:1px solid #ffffff30;padding:25px 0 0}.contact-panel{padding:26px}.model-note{padding:24px}.contact-panel h2{font-size:clamp(2.5rem,10vw,3.5rem)}}
