@@ -18,7 +18,8 @@ export default defineConfig({
     closeBundle() {
       mkdirSync('dist', { recursive: true });
       for (const file of ['ja_music_dual_demo.html', 'ja_music_logo.png']) {
-        if (existsSync(file)) copyFileSync(file, join('dist', file));
+        const source = file === 'ja_music_dual_demo.html' && existsSync(join('public', file)) ? join('public', file) : file;
+        if (existsSync(source)) copyFileSync(source, join('dist', file));
       }
       if (existsSync('assets')) cpSync('assets', 'dist/assets', { recursive: true });
     }
