@@ -145,3 +145,15 @@ em{background:linear-gradient(110deg,#fff 10%,#ff83bc 92%);-webkit-background-cl
 .contact-disclaimer{font-size:12px;border-top:1px solid #ffffff25;padding-top:16px;margin-top:20px}
 @media(max-width:950px){.team-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.about-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.contact-panel{gap:25px}}
 @media(max-width:650px){.about-lead,.about-grid,.team-grid,.contact-panel{grid-template-columns:1fr}.about-lead>div,.about-grid article,.team-grid article{padding:23px}.contact-details{border-left:0;border-top:1px solid #ffffff30;padding:25px 0 0}.contact-panel{padding:26px}.model-note{padding:24px}.contact-panel h2{font-size:clamp(2.5rem,10vw,3.5rem)}}
+
+/* Orbiting Namibian album artwork and GitHub contact portrait */
+.orbit-showcase{text-align:center;padding-top:75px;padding-bottom:80px}
+.orbit-showcase h2{font-size:clamp(2.8rem,5vw,4.6rem);letter-spacing:-.06em;margin:16px 0}
+.orbit-showcase>p{max-width:600px;margin:0 auto 22px;color:#b6c4e2}
+.orbit-showcase .orbit-container{max-width:920px}
+.orbit-logo{display:flex;align-items:center;flex-direction:column;gap:9px;filter:drop-shadow(0 8px 18px #000b)}
+.orbit-logo img{width:clamp(58px,10vw,95px);height:clamp(58px,10vw,95px);object-fit:contain;border-radius:19px}
+.orbit-logo span{font-weight:800;font-size:clamp(12px,2vw,18px);letter-spacing:.18em;color:#fff}
+.team-avatar{display:block;width:66px;height:66px;object-fit:cover;border-radius:18px;border:2px solid #f72585;margin-bottom:14px;background:#27365b}
+.team-grid a svg{vertical-align:middle}
+@media(max-width:600px){.orbit-showcase{padding-top:45px;padding-bottom:50px}.orbit-showcase .orbit-container{margin-top:8px}}
