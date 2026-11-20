@@ -1,27 +1,11 @@
 import CircularCarousel from './CircularCarousel';
 
-const BASE = import.meta.env.BASE_URL;
-
-// Keep artwork paths under Vite's base URL for both local and GitHub Pages builds.
+// Editorial album discovery only; artwork is hosted by its original providers.
+// Albums are not available for streaming or purchase through the Ja Music prototype.
 const items = [
-  {
-    src: `${BASE}assets/images/valley.jpg`,
-    alt: 'Mist drifting through a valley',
-    title: 'Valley',
-    subtitle: 'Landscape'
-  },
-  {
-    src: `${BASE}assets/images/portrait.jpg`,
-    alt: 'A studio portrait',
-    title: 'Portrait',
-    subtitle: 'Studio'
-  },
-  {
-    src: `${BASE}assets/images/towers.jpg`,
-    alt: 'Glass towers from street level',
-    title: 'Towers',
-    subtitle: 'Architecture'
-  }
+  {src:'https://i.scdn.co/image/ab67616d0000b27344a8f1e132a7fddf5d4a0ade',alt:'Gazza — Misunderstood album cover',title:'Misunderstood',subtitle:'Gazza · 2018'},
+  {src:'https://www.namibiana.de/media/catalog/product/1/7/17030-beautiful-world-cd-elemotho.jpg',alt:'Elemotho — Beautiful World album cover',title:'Beautiful World',subtitle:'Elemotho · 2017'},
+  {src:'https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/27/a6/e3/27a6e37a-baa3-c1fa-9c60-3f10e888c4c9/artwork.jpg/3000x3000bb.jpg',alt:'Sally Boss Madam — My Black album cover',title:'My Black',subtitle:'Sally Boss Madam · 2017'}
 ];
 
 export default function MusicDiscoveryCarousel() {
@@ -29,10 +13,10 @@ export default function MusicDiscoveryCarousel() {
     <section className="section container carousel-showcase" aria-labelledby="carousel-showcase-title">
       <div className="section-head">
         <div>
-          <div className="kicker">VISUAL DISCOVERY</div>
-          <h2 id="carousel-showcase-title">Creativity in <em>motion.</em></h2>
+          <div className="kicker">NAMIBIAN ALBUM SPOTLIGHT</div>
+          <h2 id="carousel-showcase-title">Real albums. <em>Local legends.</em></h2>
         </div>
-        <p>Explore the places and portraits that inspire new stories, new sounds and new perspectives.</p>
+        <p>Discover real releases by Namibian artists. Featured for editorial discovery; not available to stream or buy in this prototype.</p>
       </div>
       <div className="carousel-stage" style={{ width: '100%', height: '560px', position: 'relative' }}>
         <CircularCarousel
@@ -46,7 +30,7 @@ export default function MusicDiscoveryCarousel() {
           gap={45}
         />
       </div>
-      <p className="carousel-hint">Drag, swipe or use the arrow keys to explore.</p>
+      <p className="carousel-hint">Drag, swipe or use the arrow keys to explore. Album art belongs to its respective rights holders.</p>
     </section>
   );
 }
